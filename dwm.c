@@ -857,10 +857,23 @@ drawbar(Monitor *m)
 	char ctmp;
 	Client *c;
 
+	/* correction for colours */
+	int correct = 0;
+	char *xcape = malloc (sizeof (char) * 128);
+	memset(xcape,0,sizeof (char) * 128);
+	for ( ; *ts != '\0' ; ts++) {
+		if (*ts <= LENGTH(colors)) {
+			sprintf(xcape,"%c",*ts);
+			correct += TEXTW(xcape) - lrpad;
+		}
+	}
+	free(xcape);
+	ts = stext;
+
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeNorm]);
-		tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
+		tw = TEXTW(stext) - lrpad + 2 - correct; /* 2px right padding and correction for escape sequences*/
 		while (1) {
 			if ((unsigned int)*ts > LENGTH(colors)) { ts++; continue ; }
 			ctmp = *ts;
