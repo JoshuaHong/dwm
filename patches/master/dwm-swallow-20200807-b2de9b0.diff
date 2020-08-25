@@ -1,3 +1,4 @@
+# Description
 # This patch adds "window swallowing" to dwm as known from Plan 9's windowing
 # system rio.
 # Clients marked with isterminal in config.h swallow a window opened by any
