@@ -1,0 +1,39 @@
+# Description
+# Add additional configurations to xresources.
+
+diff --git a/config.def.h b/config.def.h
+index 7655748..79584f9 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -2,9 +2,9 @@
+ 
+ /* appearance */
+ static unsigned int borderpx  = 1;        /* border pixel of windows */
+-static const unsigned int gappx     = 18;       /* gap pixel between windows */
++static unsigned int gappx     = 18;       /* gap pixel between windows */
+ static unsigned int snap      = 32;       /* snap pixel */
+-static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
++static int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
+ static int showbar            = 1;        /* 0 means no bar */
+ static int topbar             = 1;        /* 0 means bottom bar */
+ static const char *fonts[]          = { "monospace:size=10" };
+@@ -96,13 +96,19 @@ ResourcePref resources[] = {
+ 		{ "selbgcolor",         STRING,  &selbgcolor },
+ 		{ "selbordercolor",     STRING,  &selbordercolor },
+ 		{ "selfgcolor",         STRING,  &selfgcolor },
++		{ "urgentbgcolor",      STRING,  &urgentbgcolor },
++		{ "warnbgcolor",        STRING,  &warnbgcolor },
++		{ "urgentfgcolor",      STRING,  &urgentfgcolor },
+ 		{ "borderpx",          	INTEGER, &borderpx },
++		{ "gappx",          	INTEGER, &gappx },
+ 		{ "snap",          		INTEGER, &snap },
++		{ "swallowfloating",	INTEGER, &swallowfloating },
+ 		{ "showbar",          	INTEGER, &showbar },
+ 		{ "topbar",          	INTEGER, &topbar },
+ 		{ "nmaster",          	INTEGER, &nmaster },
+ 		{ "resizehints",       	INTEGER, &resizehints },
+ 		{ "mfact",      	 	FLOAT,   &mfact },
++		{ "attachbottom",   	INTEGER, &attachbottomflag },
+ };
+ 
+ static Key keys[] = {
