@@ -1,0 +1,84 @@
+# Description
+# Adds an option to toggle between the default attach behavior or attaching a
+# new client to the bottom of the stack using the attachbottom patch.
+
+diff --git a/config.def.h b/config.def.h
+index 50f04f5..7655748 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -61,6 +61,7 @@ static const Rule rules[] = {
+ static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+ static int nmaster     = 1;    /* number of clients in master area */
+ static int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
++static int attachbottomflag = 1; /* 1 means attach new clients at the bottom of the stack */
+ 
+ static const Layout layouts[] = {
+ 	/* symbol     arrange function */
+@@ -109,6 +110,7 @@ static Key keys[] = {
+ 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+ 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+ 	{ MODKEY,                       XK_b,      togglebar,      {0} },
++	{ MODKEY,                       XK_a,      toggleattachbottom, {0} },
+ 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
+ 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
+ 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
+diff --git a/dwm.c b/dwm.c
+index 9fb876f..2a9d82a 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -245,6 +245,7 @@ static void spawn(const Arg *arg);
+ static void tag(const Arg *arg);
+ static void tagmon(const Arg *arg);
+ static void tile(Monitor *);
++static void toggleattachbottom();
+ static void togglebar(const Arg *arg);
+ static void togglefloating(const Arg *arg);
+ static void togglescratch(const Arg *arg);
+@@ -1257,7 +1258,10 @@ manage(Window w, XWindowAttributes *wa)
+ 		c->isfloating = c->oldstate = trans != None || c->isfixed;
+ 	if (c->isfloating)
+ 		XRaiseWindow(dpy, c->win);
+-	attachbottom(c);
++	if (attachbottomflag)
++		attachbottom(c);
++	else
++		attach(c);
+ 	attachstack(c);
+ 	XChangeProperty(dpy, root, netatom[NetClientList], XA_WINDOW, 32, PropModeAppend,
+ 		(unsigned char *) &(c->win), 1);
+@@ -1815,7 +1819,10 @@ sendmon(Client *c, Monitor *m)
+ 	detachstack(c);
+ 	c->mon = m;
+ 	c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
+-	attachbottom(c);
++	if (attachbottomflag)
++		attachbottom(c);
++	else
++		attach(c);
+ 	attachstack(c);
+ 	focus(NULL);
+ 	arrange(NULL);
+@@ -2154,6 +2161,11 @@ tile(Monitor *m)
+ 		}
+ }
+ 
++void toggleattachbottom()
++{
++	attachbottomflag = !attachbottomflag;
++}
++
+ void
+ togglebar(const Arg *arg)
+ {
+@@ -2431,7 +2443,10 @@ updategeom(void)
+ 					m->clients = c->next;
+ 					detachstack(c);
+ 					c->mon = mons;
+-					attachbottom(c);
++					if (attachbottomflag)
++						attachbottom(c);
++					else
++						attach(c);
+ 					attachstack(c);
+ 				}
+ 				if (m == selmon)
